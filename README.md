@@ -24,20 +24,28 @@
 
 ### 1. 安裝
 
-首先，複製本專案並使用 Poetry 進行安裝：
+首先，複製本專案並在虛擬環境中安裝：
 
 ```bash
 git clone https://github.com/your-username/privai-cli.git
 cd privai-cli
-poetry install
+
+# 建立並啟用虛擬環境
+python3 -m venv venv
+source venv/bin/activate  # macOS / Linux
+# .\venv\Scripts\activate  # Windows
+
+# 使用 pip 安裝專案及其依賴
+pip install .
 ```
+安裝完成後，`privai-cli` 指令即可在已啟用的虛擬環境中使用。
 
 ### 2. 設定
 
 在使用之前，您需要設定 PrivAI 的 API URL 和您的 Bearer Token：
 
 ```bash
-poetry run privai-cli config set --api-url <your-api-url> --token <your-bearer-token>
+privai-cli config set --api-url <your-api-url> --token <your-bearer-token>
 ```
 
 ### 3. 完整工作流程範例
@@ -46,22 +54,22 @@ poetry run privai-cli config set --api-url <your-api-url> --token <your-bearer-t
 
 ```bash
 # 1. 上傳一個檔案
-poetry run privai-cli files upload ./path/to/your/document.pdf
+privai-cli files upload ./path/to/your/document.pdf
 
 # 2. 建立一個資料集 (Fileset)
 # (請將 <file-id-1> 替換為上一步回傳的檔案 ID)
-poetry run privai-cli filesets create --file-ids <file-id-1>
+privai-cli filesets create --file-ids <file-id-1>
 
 # 3. 提交資料集進行處理
 # (請將 <fileset-id-1> 替換為上一步回傳的資料集 ID)
-poetry run privai-cli filesets commit <fileset-id-1>
+privai-cli filesets commit <fileset-id-1>
 
 # 4. 建立一個聊天用的 Prompt
-poetry run privai-cli prompt create "You are a helpful assistant."
+privai-cli prompt create "You are a helpful assistant."
 
 # 5. 開始聊天！
 # (請將 <prompt-id-1> 和 <fileset-id-1> 替換為先前步驟中獲得的 ID)
-poetry run privai-cli chat completions \
+privai-cli chat completions \
   --model "gpt-4" \
   --messages '[{"role": "user", "content": "根據我提供的文件，總結一下重點。"}]' \
   --fileset-id <fileset-id-1> \
@@ -72,24 +80,19 @@ poetry run privai-cli chat completions \
 
 以下是 `privai-cli` 的詳細指令說明。
 
-<details>
-<summary><b>模型 (Models)</b></summary>
+### 模型 (Models)
 
 *   `privai-cli models list`: 列出所有可用的 AI 模型。
-</details>
 
-<details>
-<summary><b>檔案 (Files)</b></summary>
+### 檔案 (Files)
 
 *   `privai-cli files list`: 列出檔案，支援篩選和分頁。
 *   `privai-cli files upload <path> --purpose <purpose>`: 上傳一個檔案。
 *   `privai-cli files get <file-id>`: 根據 ID 獲取特定檔案的元數據。
 *   `privai-cli files delete <file-id>`: 根據 ID 刪除一個檔案。
 *   `privai-cli files content <file-id> --file-type <type>`: 下載特定檔案的內容。
-</details>
 
-<details>
-<summary><b>資料集 (Filesets)</b></summary>
+### 資料集 (Filesets)
 
 *   `privai-cli filesets list`: 列出所有資料集。
 *   `privai-cli filesets create --file-ids <id1> <id2> ...`: 建立一個新的資料集。
@@ -98,17 +101,13 @@ poetry run privai-cli chat completions \
 *   `privai-cli filesets delete <fileset-id>`: 根據 ID 刪除一個資料集。
 *   `privai-cli filesets commit <fileset-id>`: 提交資料集以進行嵌入處理。
 *   `privai-cli filesets duplicate <fileset-id>`: 複製一個資料集。
-</details>
 
-<details>
-<summary><b>聊天 (Chat)</b></summary>
+### 聊天 (Chat)
 
 *   `privai-cli chat completions --model <model> --messages '[{"role": "user", ...}]'`: 發起一個聊天請求。
     *   可選參數: `--prompt-id`, `--fileset-id`, `--temperature`
-</details>
 
-<details>
-<summary><b>提示詞 (Prompt)</b></summary>
+### 提示詞 (Prompt)
 
 *   `privai-cli prompt create <value>`: 建立一個新的提示詞。
 *   `privai-cli prompt list`: 列出所有提示詞。
@@ -116,23 +115,18 @@ poetry run privai-cli chat completions \
 *   `privai-cli prompt delete <prompt-id>`: 根據 ID 刪除一個提示詞。
 *   `privai-cli prompt optimize-auto <prompt-id>`: 自動優化一個提示詞。
 *   `privai-cli prompt optimize-instruct <prompt-id> --current-issue <issue> --desired-behavior <behavior>`: 根據指示優化提示詞。
-</details>
 
-<details>
-<summary><b>問答生成 (QA)</b></summary>
+### 問答生成 (QA)
 
 *   `privai-cli qa generate --fileset-id <fileset-id>`: 從資料集中生成問答對。
-</details>
 
-<details>
-<summary><b>LangServe</b></summary>
+### LangServe
 
 *   `privai-cli langserve input-schema`: 獲取 runnable 的輸入 schema。
 *   `privai-cli langserve output-schema`: 獲取 runnable 的輸出 schema。
 *   `privai-cli langserve config-schema`: 獲取 runnable 的設定 schema。
 *   `privai-cli langserve invoke '<input-json>'`: 叫用 runnable。
 *   `privai-cli langserve stream '<input-json>'`: 以串流方式叫用 runnable。
-</details>
 
 ## 🤝 貢獻
 
